@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+/* disabled as OBS needs no background for transparency
 html.dark {
   background-color: #282828;
 }
+*/
