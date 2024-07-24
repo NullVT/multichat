@@ -3,12 +3,14 @@ import { defineStore } from "pinia";
 
 export type Settings = {
   darkMode: boolean;
+  sevenTv: boolean;
 };
 
-export const useSettingsStore = defineStore("settings", {
+export default defineStore("settings", {
   persist: true,
   state: (): Settings => ({
     darkMode: window.matchMedia("(prefers-color-scheme: dark)").matches,
+    sevenTv: false,
   }),
   actions: {
     update(partialSettings: Partial<Settings>) {

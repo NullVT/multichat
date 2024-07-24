@@ -61,13 +61,20 @@
                     </div>
                   </div>
                   <div class="relative mt-6 flex-1 px-4 sm:px-6">
-                    <ul role="list" class="flex flex-1 flex-col min-h-full">
+                    <ul role="list" class="flex flex-1 flex-col min-h-full space-y-4">
+                      <!-- settings -->
                       <li><Darkmode /></li>
+                      <!-- <li><SevenTv /></li> -->
+
+                      <!-- credentials -->
+                      <li><button></button></li>
+
+                      <!-- footer -->
                       <li class="mt-auto dark:text-gray-400 text-center">
                         Built by
-                        <a href="https://nulltvt.com" class="underline"
-                          >NullVT</a
-                        >
+                        <a href="https://nulltvt.com" class="underline">
+                          NullVT
+                        </a>
                       </li>
                     </ul>
                   </div>
@@ -92,6 +99,7 @@ import {
 } from "@headlessui/vue";
 import { Cog6ToothIcon, XMarkIcon } from "@heroicons/vue/24/solid";
 import Darkmode from "./settings/darkmode.vue";
+// import SevenTv from "./settings/sevenTv.vue";
 
 const open = ref(true);
 </script>

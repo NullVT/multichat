@@ -3,5 +3,5 @@
 @tailwind utilities;
 
 html.dark {
-  background-color: theme(colors.gray.900);
+  background-color: #282828;
 }
