@@ -1,8 +1,12 @@
 <template>
   <button
     type="button"
-    class="absolute top-4 right-4 rounded-full bg-slate-300 dark:bg-slate-700 p-2 text-white shadow-sm hover:bg-slate-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-600 opacity-20 hover:opacity-100 transition-opacity"
-    @click="open = true"
+    class="absolute top-4 right-4 rounded-full bg-slate-300 dark:bg-slate-700 p-2 text-white shadow-sm hover:bg-slate-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-600 hover:opacity-100 transition-opacity"
+    :class="firstOpen ? 'opacity-100' : 'opacity-0'"
+    @click="
+      open = true;
+      firstOpen = false;
+    "
   >
     <Cog6ToothIcon class="h-5 w-5" aria-hidden="true" />
   </button>
@@ -18,7 +22,7 @@
         leave-to="opacity-0"
       >
         <div
-          class="fixed inset-0 bg-gray-400 dark:bg-gray-800 bg-opacity-75 transition-opacity"
+          class="fixed inset-0 bg-gray-400 bg-opacity-75 transition-opacity"
         />
       </TransitionChild>
 
@@ -61,22 +65,25 @@
                     </div>
                   </div>
                   <div class="relative mt-6 flex-1 px-4 sm:px-6">
-                    <ul role="list" class="flex flex-1 flex-col min-h-full space-y-4">
+                    <ul
+                      role="list"
+                      class="flex flex-1 flex-col space-y-4 h-full"
+                    >
                       <!-- settings -->
                       <li><Darkmode /></li>
                       <!-- <li><SevenTv /></li> -->
 
                       <!-- credentials -->
-                      <li><button></button></li>
-
-                      <!-- footer -->
-                      <li class="mt-auto dark:text-gray-400 text-center">
-                        Built by
-                        <a href="https://nulltvt.com" class="underline">
-                          NullVT
-                        </a>
+                      <li>
+                        <TwitchLogin />
                       </li>
                     </ul>
+                    <div class="dark:text-gray-400 text-center mt-auto">
+                      Built by
+                      <a href="https://nulltvt.com" class="underline">
+                        NullVT
+                      </a>
+                    </div>
                   </div>
                 </div>
               </DialogPanel>
@@ -100,6 +107,8 @@ import {
 import { Cog6ToothIcon, XMarkIcon } from "@heroicons/vue/24/solid";
 import Darkmode from "./settings/darkmode.vue";
 // import SevenTv from "./settings/sevenTv.vue";
+import TwitchLogin from "./settings/twitchLogin.vue";
 
-const open = ref(true);
+const open = ref(false);
+const firstOpen = ref(true);
 </script>
