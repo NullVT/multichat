@@ -75,7 +75,7 @@ const parseMessage = (message: string): ParsedMessage | null => {
     if (rawParametersComponent && rawParametersComponent[0] === "!") {
       parsedMessage.command = parseParameters(
         rawParametersComponent,
-        parsedMessage.command
+        parsedMessage.command,
       );
     }
   }
@@ -196,7 +196,7 @@ const parseCommand = (rawCommandComponent: string): Command | null => {
       break;
     case "RECONNECT":
       console.log(
-        "The Twitch IRC server is about to terminate the connection for maintenance."
+        "The Twitch IRC server is about to terminate the connection for maintenance.",
       );
       parsedCommand = {
         command: commandParts[0],
@@ -243,7 +243,7 @@ const parseSource = (rawSourceComponent: string | null): Source | null => {
 
 const parseParameters = (
   rawParametersComponent: string,
-  command: Command
+  command: Command,
 ): Command => {
   let commandParts = rawParametersComponent.slice(1).trim();
   let paramsIdx = commandParts.indexOf(" ");

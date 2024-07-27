@@ -26,7 +26,7 @@
 <script lang="ts" setup>
 import { computed } from "vue";
 import { Switch } from "@headlessui/vue";
-import {useSettingsStore} from "../../stores/settings.vue";
+import { useSettingsStore } from "../../stores/settings.vue";
 
 const settings = useSettingsStore();
 

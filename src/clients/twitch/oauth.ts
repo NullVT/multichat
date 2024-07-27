@@ -10,7 +10,7 @@ export const oauth = async (credStore: CredentialsStore) => {
     console.error(
       "twitch auth error",
       params.get("error"),
-      params.get("error_description")
+      params.get("error_description"),
     );
   }
 
@@ -45,7 +45,7 @@ export const oauth = async (credStore: CredentialsStore) => {
 
   // remove params from url
   window.location.replace(
-    window.location.href.split("#")[0].replace(/\/oauth\/twitch$/, "")
+    window.location.href.split("#")[0].replace(/\/oauth\/twitch$/, ""),
   );
 };
 
