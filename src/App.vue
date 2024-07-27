@@ -16,40 +16,32 @@
 <script lang="ts" setup>
 import { onMounted } from "vue";
 import Sidebar from "./components/sidebar.vue";
-import useSettingsStore from "./stores/settings.vue";
-import useCredentialsStore from "./stores/credentials.vue";
+import { useSettingsStore } from "./stores/settings.vue";
+import { useCredentialsStore } from "./stores/credentials.vue";
 import { setDarkTheme } from "./helpers";
+import { init as twitchInit, oauth as twitchOauth } from "./clients/twitch";
+import { useMessagesStore } from "./stores/messages.vue";
+
+// setup stores
+const credsStore = useCredentialsStore();
+const msgStore = useMessagesStore();
 
 // handle oauth crap
 if (window.location.pathname.startsWith("/oauth/twitch")) {
-  // extract params from url
-  const params = new URLSearchParams(window.location.hash.replace(/^#/, ""));
-
-  // send error toast
-  if (params.has("error")) {
-    console.error(
-      "twitch auth error",
-      params.get("error"),
-      params.get("error_description")
-    );
-  }
-
-  // persist auth token
-  const creds = useCredentialsStore();
-  if (!params.has("error") && params.has("access_token")) {
-    creds.update({ twitch: params.get("access_token")! });
-  }
-
-  // remove params from url
-  window.location.replace(
-    window.location.href.split("#")[0].replace(/\/oauth\/twitch$/, "")
-  );
+  twitchOauth(credsStore);
 }
 
 // bind darkmode to html element
 const settings = useSettingsStore();
-settings.$onAction(({ name, after }) => {
-  after(() => name === "update" && setDarkTheme(settings.darkMode));
-});
+settings.$subscribe((mutation, state) => setDarkTheme(state.darkMode));
 onMounted(() => setDarkTheme(settings.darkMode));
+
+// setup connection to twitch
+if (credsStore.twitch) {
+  const twitchWs = twitchInit({
+    channel: credsStore.twitch?.username ?? "nullvt",
+    credsStore,
+    msgStore,
+  });
+}
 </script>

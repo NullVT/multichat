@@ -1,19 +1,19 @@
 <script lang="ts">
-import { defineStore } from "pinia";
+import { defineStore, Store } from "pinia";
 
 export type Credentials = {
-  twitch?: string;
+  twitch?: {
+    token: string;
+    username?: string;
+  };
 };
 
-export default defineStore("credentials", {
+export type CredentialsStore = Store<"credentials", Credentials>;
+export const useCredentialsStore = defineStore("credentials", {
   persist: true,
   state: (): Credentials => ({
     twitch: undefined,
   }),
-  actions: {
-    update(partial: Partial<Credentials>) {
-      this.$state = { ...this.$state, ...partial };
-    },
-  },
+  actions: {},
 });
 </script>

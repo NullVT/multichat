@@ -17,7 +17,7 @@
     </Switch>
     <SwitchLabel as="span" class="ml-3 text-sm">
       <span class="font-medium text-gray-900 dark:text-white text-center">
-        Dark Theme
+        7TV Emotes
       </span>
     </SwitchLabel>
   </SwitchGroup>
@@ -32,10 +32,10 @@ const settings = useSettingsStore();
 
 const enabled = computed({
   get() {
-    return settings.darkMode;
+    return settings.sevenTv;
   },
-  set(darkMode) {
-    settings.$patch({ darkMode });
+  set(sevenTv) {
+    settings.$patch({ sevenTv });
   },
 });
 </script>

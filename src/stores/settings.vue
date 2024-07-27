@@ -6,16 +6,12 @@ export type Settings = {
   sevenTv: boolean;
 };
 
-export default defineStore("settings", {
+export const useSettingsStore = defineStore("settings", {
   persist: true,
   state: (): Settings => ({
-    darkMode: window.matchMedia("(prefers-color-scheme: dark)").matches,
+    darkMode: false,
     sevenTv: false,
   }),
-  actions: {
-    update(partialSettings: Partial<Settings>) {
-      this.$state = { ...this.$state, ...partialSettings };
-    },
-  },
+  actions: {},
 });
 </script>

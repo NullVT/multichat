@@ -14,17 +14,7 @@
 </template>
 
 <script lang="ts" setup>
-import useCredentialsStore from "../../stores/credentials.vue";
+import { useCredentialsStore } from "../../stores/credentials.vue";
+import { login } from "../../clients/twitch";
 const creds = useCredentialsStore();
-
-const login = () => {
-  const params = new URLSearchParams({
-    response_type: "token",
-    client_id: import.meta.env.VITE_TWITCH_CLIENT_ID,
-    redirect_uri: `${window.location.origin}/oauth/twitch`,
-    scope: "chat:read",
-  });
-  const url = `https://id.twitch.tv/oauth2/authorize?${params.toString()}`;
-  window.location.assign(url);
-};
 </script>
