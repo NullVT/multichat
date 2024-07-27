@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineStore, Store } from "pinia";
-
+import config from "../config";
 export type Message = {
   platform: "twitch" | "youtube";
   recivedAt: Date;
@@ -21,8 +21,10 @@ export const useMessagesStore = defineStore("messages", {
   state: (): Message[] => [],
   actions: {
     push(msg: Message) {
-      // todo: only keep n messages
       this.$state.push(msg);
+      if (this.$state.length > config.maxMessages) {
+        this.$state.shift();
+      }
     },
   },
 });

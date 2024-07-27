@@ -267,7 +267,7 @@ export default (msgStore: MessagesStore) =>
         platform: "twitch",
         recivedAt: new Date(),
         from: message.source?.nick!,
-        body: message.parameters!,
+        body: message.parameters!.trim(),
       });
     }
   };

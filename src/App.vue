@@ -1,6 +1,9 @@
 <template>
   <Sidebar />
-  <div class="mt-20 text-center">
+  <Messages />
+
+  <!-- Fresh install warning -->
+  <div v-if="!credsStore.twitch" class="mt-20 text-center">
     <h1 class="text-3xl underline decoration-red-500">
       Not connected to any accounts! <br />
       Please open the settings and connect at least one account.
@@ -16,6 +19,7 @@
 <script lang="ts" setup>
 import { onMounted } from "vue";
 import Sidebar from "./components/sidebar.vue";
+import Messages from "./components/messages.vue";
 import { useSettingsStore } from "./stores/settings.vue";
 import { useCredentialsStore } from "./stores/credentials.vue";
 import { setDarkTheme } from "./helpers";
