@@ -23,7 +23,7 @@
       >
         <div
           class="fixed inset-0 bg-gray-400 bg-opacity-75 transition-opacity"
-        />
+        ></div>
       </TransitionChild>
 
       <div class="fixed inset-0 overflow-hidden">
@@ -69,14 +69,16 @@
                       role="list"
                       class="flex flex-1 flex-col space-y-4 h-full"
                     >
+
+                      <!-- credentials -->
+                      <li class="mb-20">
+                        <TwitchLogin />
+                      </li>
+
                       <!-- settings -->
                       <li><Darkmode /></li>
                       <!-- <li><SevenTv /></li> -->
-
-                      <!-- credentials -->
-                      <li>
-                        <TwitchLogin />
-                      </li>
+                      <li><Timeout /></li>
                     </ul>
                     <div class="dark:text-gray-400 text-center mt-auto">
                       Built by
@@ -108,6 +110,7 @@ import { Cog6ToothIcon, XMarkIcon } from "@heroicons/vue/24/solid";
 import Darkmode from "./settings/darkmode.vue";
 // import SevenTv from "./settings/sevenTv.vue";
 import TwitchLogin from "./settings/twitchLogin.vue";
+import Timeout from "./settings/timeout.vue";
 
 const open = ref(false);
 const firstOpen = ref(true);

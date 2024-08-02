@@ -1,3 +1,4 @@
+import { v4 as uuidV4 } from "uuid";
 import { MessagesStore } from "../../stores/messages.vue";
 
 type ParsedMessage = {
@@ -21,196 +22,164 @@ type Command = {
 };
 
 const parseMessage = (message: string): ParsedMessage | null => {
-  let parsedMessage: ParsedMessage = {
-    tags: null,
-    source: null,
-    command: null,
-    parameters: null,
-  };
+  const {
+    rawTagsComponent,
+    rawSourceComponent,
+    rawCommandComponent,
+    rawParametersComponent,
+  } = extractComponents(message);
 
+  const command = parseCommand(rawCommandComponent);
+
+  if (command === null) {
+    return null;
+  }
+
+  const tags = rawTagsComponent ? parseTags(rawTagsComponent) : null;
+  const source = parseSource(rawSourceComponent);
+  const parameters = rawParametersComponent;
+
+  const finalCommand =
+    rawParametersComponent && rawParametersComponent[0] === "!"
+      ? parseParameters(rawParametersComponent, command)
+      : command;
+
+  return {
+    tags,
+    source,
+    command: finalCommand,
+    parameters,
+  };
+};
+
+const extractComponents = (message: string) => {
   let idx = 0;
 
-  let rawTagsComponent: string | null = null;
-  let rawSourceComponent: string | null = null;
-  let rawCommandComponent: string | null = null;
-  let rawParametersComponent: string | null = null;
-
-  if (message[idx] === "@") {
-    let endIdx = message.indexOf(" ");
-    rawTagsComponent = message.slice(1, endIdx);
-    idx = endIdx + 1;
-  }
-
-  if (message[idx] === ":") {
-    idx += 1;
-    let endIdx = message.indexOf(" ", idx);
-    rawSourceComponent = message.slice(idx, endIdx);
-    idx = endIdx + 1;
-  }
-
-  let endIdx = message.indexOf(":", idx);
-  if (endIdx === -1) {
-    endIdx = message.length;
-  }
-
-  rawCommandComponent = message.slice(idx, endIdx).trim();
-
-  if (endIdx !== message.length) {
-    idx = endIdx + 1;
-    rawParametersComponent = message.slice(idx);
-  }
-
-  parsedMessage.command = parseCommand(rawCommandComponent);
-
-  if (parsedMessage.command === null) {
+  const extract = (condition: boolean, start: number, end: number) => {
+    if (condition) {
+      const component = message.slice(start, end);
+      idx = end + 1;
+      return component;
+    }
     return null;
-  } else {
-    if (rawTagsComponent !== null) {
-      parsedMessage.tags = parseTags(rawTagsComponent);
-    }
+  };
 
-    parsedMessage.source = parseSource(rawSourceComponent);
+  const rawTagsComponent = extract(
+    message[idx] === "@",
+    1,
+    message.indexOf(" ")
+  );
+  const rawSourceComponent = extract(
+    message[idx] === ":",
+    idx + 1,
+    message.indexOf(" ", idx)
+  );
+  const rawCommandComponent = message
+    .slice(
+      idx,
+      message.indexOf(":", idx) === -1
+        ? message.length
+        : message.indexOf(":", idx)
+    )
+    .trim();
+  const rawParametersComponent =
+    message.indexOf(":", idx) !== -1
+      ? message.slice(message.indexOf(":", idx) + 1)
+      : null;
 
-    parsedMessage.parameters = rawParametersComponent;
-    if (rawParametersComponent && rawParametersComponent[0] === "!") {
-      parsedMessage.command = parseParameters(
-        rawParametersComponent,
-        parsedMessage.command
-      );
-    }
-  }
-
-  return parsedMessage;
+  return {
+    rawTagsComponent,
+    rawSourceComponent,
+    rawCommandComponent,
+    rawParametersComponent,
+  };
 };
 
 const parseTags = (tags: string): { [key: string]: any } => {
-  const tagsToIgnore = {
-    "client-nonce": null,
-    flags: null,
-  };
+  const tagsToIgnore = new Set(["client-nonce", "flags"]);
 
-  let dictParsedTags: { [key: string]: any } = {};
-  let parsedTags = tags.split(";");
+  return tags.split(";").reduce(
+    (acc, tag) => {
+      const [key, value] = tag.split("=");
+      const tagValue = value === "" ? null : value;
 
-  parsedTags.forEach((tag) => {
-    let parsedTag = tag.split("=");
-    let tagValue = parsedTag[1] === "" ? null : parsedTag[1];
+      if (tagsToIgnore.has(key)) {
+        return acc;
+      }
 
-    switch (parsedTag[0]) {
-      case "badges":
-      case "badge-info":
-        if (tagValue) {
-          let dict: { [key: string]: string } = {};
-          let badges = tagValue.split(",");
-          badges.forEach((pair) => {
-            let badgeParts = pair.split("/");
-            dict[badgeParts[0]] = badgeParts[1];
-          });
-          dictParsedTags[parsedTag[0]] = dict;
-        } else {
-          dictParsedTags[parsedTag[0]] = null;
-        }
-        break;
-      case "emotes":
-        if (tagValue) {
-          let dictEmotes: {
-            [key: string]: { startPosition: string; endPosition: string }[];
-          } = {};
-          let emotes = tagValue.split("/");
-          emotes.forEach((emote) => {
-            let emoteParts = emote.split(":");
+      const parseValue = (parseFunc: (value: string) => any) =>
+        tagValue ? parseFunc(tagValue) : null;
 
-            let textPositions: {
-              startPosition: string;
-              endPosition: string;
-            }[] = [];
-            let positions = emoteParts[1].split(",");
-            positions.forEach((position) => {
-              let positionParts = position.split("-");
-              textPositions.push({
-                startPosition: positionParts[0],
-                endPosition: positionParts[1],
-              });
-            });
+      switch (key) {
+        case "badges":
+        case "badge-info":
+          acc[key] = parseValue((v) =>
+            v.split(",").reduce(
+              (badgeAcc, pair) => {
+                const [badgeKey, badgeValue] = pair.split("/");
+                badgeAcc[badgeKey] = badgeValue;
+                return badgeAcc;
+              },
+              {} as { [key: string]: string }
+            )
+          );
+          break;
 
-            dictEmotes[emoteParts[0]] = textPositions;
-          });
+        case "emotes":
+          acc[key] = parseValue((v) =>
+            v.split("/").reduce(
+              (emoteAcc, emote) => {
+                const [emoteKey, positions] = emote.split(":");
+                emoteAcc[emoteKey] = positions.split(",").map((position) => {
+                  const [start, end] = position.split("-");
+                  return { startPosition: start, endPosition: end };
+                });
+                return emoteAcc;
+              },
+              {} as {
+                [key: string]: { startPosition: string; endPosition: string }[];
+              }
+            )
+          );
+          break;
+        case "emote-sets":
+          acc[key] = parseValue((v) => v.split(","));
+          break;
+        default:
+          acc[key] = tagValue;
+      }
 
-          dictParsedTags[parsedTag[0]] = dictEmotes;
-        } else {
-          dictParsedTags[parsedTag[0]] = null;
-        }
-        break;
-      case "emote-sets":
-        let emoteSetIds = tagValue?.split(",");
-        dictParsedTags[parsedTag[0]] = emoteSetIds;
-        break;
-      default:
-        if (!tagsToIgnore.hasOwnProperty(parsedTag[0])) {
-          dictParsedTags[parsedTag[0]] = tagValue;
-        }
-    }
-  });
-
-  return dictParsedTags;
+      return acc;
+    },
+    {} as { [key: string]: any }
+  );
 };
 
 const parseCommand = (rawCommandComponent: string): Command | null => {
-  let parsedCommand: Command | null = null;
-  let commandParts = rawCommandComponent.split(" ");
+  const commandParts = rawCommandComponent.split(" ");
+  const command = commandParts[0];
 
-  switch (commandParts[0]) {
+  switch (command) {
     case "JOIN":
     case "PART":
     case "NOTICE":
     case "CLEARCHAT":
     case "HOSTTARGET":
     case "PRIVMSG":
-      parsedCommand = {
-        command: commandParts[0],
-        channel: commandParts[1],
-      };
-      break;
-    case "PING":
-      parsedCommand = {
-        command: commandParts[0],
-      };
-      break;
-    case "CAP":
-      parsedCommand = {
-        command: commandParts[0],
-        isCapRequestEnabled: commandParts[2] === "ACK",
-      };
-      break;
-    case "GLOBALUSERSTATE":
-      parsedCommand = {
-        command: commandParts[0],
-      };
-      break;
     case "USERSTATE":
     case "ROOMSTATE":
-      parsedCommand = {
-        command: commandParts[0],
-        channel: commandParts[1],
-      };
-      break;
+      return { command, channel: commandParts[1] };
+    case "PING":
+    case "GLOBALUSERSTATE":
     case "RECONNECT":
-      console.log(
-        "The Twitch IRC server is about to terminate the connection for maintenance."
-      );
-      parsedCommand = {
-        command: commandParts[0],
-      };
-      break;
+      return { command };
+    case "CAP":
+      return { command, isCapRequestEnabled: commandParts[2] === "ACK" };
+    case "001":
+      return { command, channel: commandParts[1] };
     case "421":
       console.log(`Unsupported IRC command: ${commandParts[2]}`);
       return null;
-    case "001":
-      parsedCommand = {
-        command: commandParts[0],
-        channel: commandParts[1],
-      };
-      break;
     case "002":
     case "003":
     case "004":
@@ -219,26 +188,22 @@ const parseCommand = (rawCommandComponent: string): Command | null => {
     case "372":
     case "375":
     case "376":
-      console.log(`numeric message: ${commandParts[0]}`);
+      console.log(`numeric message: ${command}`);
       return null;
     default:
-      console.log(`\nUnexpected command: ${commandParts[0]}\n`);
+      console.log(`\nUnexpected command: ${command}\n`);
       return null;
   }
-
-  return parsedCommand;
 };
 
 const parseSource = (rawSourceComponent: string | null): Source | null => {
-  if (rawSourceComponent === null) {
-    return null;
-  } else {
-    let sourceParts = rawSourceComponent.split("!");
-    return {
-      nick: sourceParts.length === 2 ? sourceParts[0] : null,
-      host: sourceParts.length === 2 ? sourceParts[1] : sourceParts[0],
-    };
-  }
+  if (!rawSourceComponent) return null;
+
+  const sourceParts = rawSourceComponent.split("!");
+  return {
+    nick: sourceParts.length === 2 ? sourceParts[0] : null,
+    host: sourceParts.length === 2 ? sourceParts[1] : sourceParts[0],
+  };
 };
 
 const parseParameters = (
@@ -248,14 +213,13 @@ const parseParameters = (
   const commandParts = rawParametersComponent.slice(1).trim();
   const paramsIdx = commandParts.indexOf(" ");
 
-  if (paramsIdx === -1) {
-    command.botCommand = commandParts.slice(0);
-  } else {
-    command.botCommand = commandParts.slice(0, paramsIdx);
-    command.botCommandParams = commandParts.slice(paramsIdx).trim();
-  }
-
-  return command;
+  return {
+    ...command,
+    botCommand:
+      paramsIdx === -1 ? commandParts : commandParts.slice(0, paramsIdx),
+    botCommandParams:
+      paramsIdx === -1 ? undefined : commandParts.slice(paramsIdx).trim(),
+  };
 };
 
 export default (msgStore: MessagesStore) =>
@@ -264,6 +228,8 @@ export default (msgStore: MessagesStore) =>
 
     if (message?.command?.command === "PRIVMSG") {
       msgStore.push({
+        // TODO: investigate using a hash-based ID
+        id: uuidV4(),
         platform: "twitch",
         recivedAt: new Date(),
         from: message.source?.nick!,

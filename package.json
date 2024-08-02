@@ -16,10 +16,12 @@
     "@tailwindcss/typography": "^0.5.13",
     "pinia": "^2.1.7",
     "pinia-plugin-persistedstate": "^3.2.1",
+    "uuid": "^10.0.0",
     "vue": "^3.4.33"
   },
   "devDependencies": {
     "@types/node": "^20.14.12",
+    "@types/uuid": "^10.0.0",
     "@types/vue": "^2.0.0",
     "@vitejs/plugin-vue": "^5.0.5",
     "autoprefixer": "^10.4.19",

@@ -1,16 +1,13 @@
 <script lang="ts">
 import { defineStore } from "pinia";
-
-export type Settings = {
-  darkMode: boolean;
-  sevenTv: boolean;
-};
+import { Settings } from "../types";
 
 export const useSettingsStore = defineStore("settings", {
   persist: true,
   state: (): Settings => ({
     darkMode: false,
     sevenTv: false,
+    timeout: 10,
   }),
   actions: {},
 });
