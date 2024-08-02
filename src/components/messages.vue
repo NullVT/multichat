@@ -1,7 +1,7 @@
 <template>
-  <ul role="list" class="space-y-3 max-w-2xl mt-3 ml-3">
+  <div class="space-y-4 max-w-2xl mt-3 ml-3">
     <Message v-for="msg in msgStore.$state" :key="msg.id" :msg="msg" />
-  </ul>
+  </div>
 </template>
 
 <script lang="ts" setup>

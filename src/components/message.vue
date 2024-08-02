@@ -1,8 +1,12 @@
 <template>
-  <li class="overflow-hidden rounded-md bg-white px-6 py-4 shadow">
-    {{ props.msg.from }}: {{ props.msg.body }}
-    <button @click="remove" class="bg-red-400">DELETE</button>
-  </li>
+  <div class="relative rounded-xl bg-white px-6 py-4 pt-8 shadow">
+    {{ props.msg.body }}
+    <div
+      class="absolute rounded-full px-6 py-1 top-2 left-9 transform -translate-x-1/2 -translate-y-1/2 drop-shadow-md bg-slate-600 text-white"
+    >
+      {{ props.msg.from }}
+    </div>
+  </div>
 </template>
 
 <script lang="ts" setup>
