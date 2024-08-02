@@ -7,7 +7,10 @@ export type Settings = {
 export type Credentials = {
   twitch?: {
     token: string;
-    username?: string;
+    userId: string;
+    displayName: string;
+    sessionId: string;
+    chatSubscriptionId?: string;
   };
 };
 

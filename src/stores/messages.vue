@@ -8,15 +8,16 @@ export type MessagesStore = Store<
   Message[],
   {},
   {
-    push(msg: Message): void;
+    add(msg: Message): void;
+    remove(id: string): void;
   }
 >;
 
 export const useMessagesStore = defineStore("messages", {
-  persist: false,
+  persist: true,
   state: (): Message[] => [],
   actions: {
-    push(msg: Message) {
+    add(msg: Message) {
       // add message to store
       this.$state.push(msg);
 
@@ -26,7 +27,7 @@ export const useMessagesStore = defineStore("messages", {
       }
     },
 
-    delete(id: string) {
+    remove(id: string) {
       const index = this.$state.findIndex((msg) => msg.id === id);
       this.$state.splice(index, 1);
     },

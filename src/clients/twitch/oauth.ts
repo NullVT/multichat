@@ -1,5 +1,6 @@
 import config from "../../config";
 import { CredentialsStore } from "../../stores/credentials.vue";
+import { UsersResponse } from "../../types/twitch";
 
 export const oauth = async (credStore: CredentialsStore) => {
   // extract params from url
@@ -10,7 +11,7 @@ export const oauth = async (credStore: CredentialsStore) => {
     console.error(
       "twitch auth error",
       params.get("error"),
-      params.get("error_description"),
+      params.get("error_description")
     );
   }
 
@@ -25,27 +26,28 @@ export const oauth = async (credStore: CredentialsStore) => {
         "Client-Id": config.twitchClientId,
       },
     });
-    // TODO: graceful error handling
-    if (!usersRes.ok) throw new Error("Failed to get Twitch Username");
-    const users = await usersRes.json();
-    let username;
-    if (users.data?.length > 0) {
-      const { login } = users.data[0];
-      username = login;
+    if (!usersRes.ok) throw new Error("Failed to fetch Twitch user info");
+
+    // unmarshal response
+    const users: UsersResponse = await usersRes.json();
+    console.log("users", JSON.stringify(users, null, 2));
+    if (users.data?.length === 0) {
+      throw new Error("Failed to fetch Twitch user info");
     }
 
     // persist creds to store
     credStore.$patch({
       twitch: {
         token,
-        username,
+        userId: users.data[0].id,
+        displayName: users.data[0].display_name,
       },
     });
   }
 
   // remove params from url
   window.location.replace(
-    window.location.href.split("#")[0].replace(/\/oauth\/twitch$/, ""),
+    window.location.href.split("#")[0].replace(/\/oauth\/twitch$/, "")
   );
 };
 
@@ -54,7 +56,7 @@ export const login = () => {
     response_type: "token",
     client_id: config.twitchClientId,
     redirect_uri: `${window.location.origin}/oauth/twitch`,
-    scope: ["chat:read", "user:read:chat", "user:read:email"].join(" "),
+    scope: ["user:bot", "user:read:chat", "user:write:chat"].join(" "),
   });
   const url = `https://id.twitch.tv/oauth2/authorize?${params.toString()}`;
   window.location.assign(url);

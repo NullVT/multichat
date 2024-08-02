@@ -6,7 +6,9 @@
   >
     <img src="/twitch.svg" class="size-6" />
     <span class="text-center w-full pr-6">{{
-      creds.twitch ? "Connected to twitch" : "Login with Twitch"
+      creds.twitch
+        ? `Connected as ${creds.twitch.displayName}`
+        : "Login with Twitch"
     }}</span>
   </button>
 </template>

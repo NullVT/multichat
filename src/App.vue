@@ -42,10 +42,6 @@ onMounted(() => setDarkTheme(settings.darkMode));
 
 // setup connection to twitch
 if (credsStore.twitch) {
-  const twitchWs = twitchInit({
-    channel: credsStore.twitch?.username ?? "nullvt",
-    credsStore,
-    msgStore,
-  });
+  const twitchWs = twitchInit(credsStore, msgStore);
 }
 </script>

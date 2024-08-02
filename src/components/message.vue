@@ -22,7 +22,7 @@ const props = defineProps<{
 }>();
 
 const remove = () => {
-  msgStore.delete(props.msg.id);
+  msgStore.remove(props.msg.id);
 };
 
 if (settings.timeout > 0) {
