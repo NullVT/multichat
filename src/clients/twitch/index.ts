@@ -42,5 +42,12 @@ export const init = ({
     console.info("Twtich WS closed");
   });
 
+  credsStore.$subscribe((event) => {
+    if (!credsStore.twitch) {
+      console.warn("Twitch creds revoked, closing WS");
+      ws.close();
+    }
+  });
+
   return ws;
 };
