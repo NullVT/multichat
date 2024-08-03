@@ -1,6 +1,6 @@
 <template>
   <div class="space-y-4 max-w-lg mt-3 ml-4">
-    <Message v-for="msg in msgStore.$state" :key="msg.id" :msg="msg" />
+    <Message v-for="msg in msgStore.messages" :key="msg.id" :msg="msg" />
   </div>
 </template>
 
