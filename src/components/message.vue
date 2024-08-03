@@ -11,7 +11,7 @@
 
     <!-- user -->
     <div
-      class="absolute rounded-full px-6 py-1 top-2 left-9 transform -translate-x-1/2 -translate-y-1/2 drop-shadow-md bg-slate-600 text-white"
+      class="absolute rounded-3xl px-6 py-1 top-2 left-8 transform -translate-x-12 -translate-y-1/2 drop-shadow-md bg-slate-600 text-white max-w-lg truncate"
     >
       {{ msg.from.name }}
     </div>
