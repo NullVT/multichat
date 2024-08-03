@@ -14,6 +14,13 @@
       but it will still be shown when hovering, and on page reload.
     </p>
   </div>
+
+  <!-- Auth error -->
+  <div v-if="credsStore.twitchError" class="mt-20 text-center">
+    <h1 class="text-3xl underline decoration-red-500">
+      Twitch connection error, please re-authenticate.
+    </h1>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -42,6 +49,6 @@ onMounted(() => setDarkTheme(settings.darkMode));
 
 // setup connection to twitch
 if (credsStore.twitch) {
-  const twitchWs = twitchInit(credsStore, msgStore);
+  twitchInit(credsStore, msgStore);
 }
 </script>

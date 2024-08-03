@@ -8,6 +8,7 @@ import {
   SessionWelcomeMessage,
   TwitchWebsocketMessage,
 } from "../../types/twitch";
+import { validateToken } from "./oauth";
 
 export * from "./oauth";
 
@@ -64,12 +65,22 @@ const subscribeToChat = async (
 export const init = (
   credsStore: CredentialsStore,
   msgStore: MessagesStore
-): WebSocket => {
+): void => {
   const ws = new WebSocket("wss://eventsub.wss.twitch.tv/ws");
   const creds = credsStore.twitch;
   if (!creds) {
-    throw new Error("Cannot init Twtich connectiion with invalid credentials");
+    throw new Error("Cannot init Twtich connection with invalid credentials");
   }
+
+  // check auth token
+  // const tokenValid = await validateToken(credsStore.twitch!.token);
+  // if (!tokenValid) {
+  //   credsStore.$patch({
+  //     twitch: undefined,
+  //     twitchError: true,
+  //   });
+  //   return;
+  // }
 
   // handle message
   ws.addEventListener(
@@ -86,10 +97,10 @@ export const init = (
           credsStore.$patch({
             twitch: { sessionId: sessionMessage.payload.session!.id },
           });
-          if (!creds.chatSubscriptionId) {
-            const chatSubscriptionId = await subscribeToChat(credsStore.twitch);
-            credsStore.$patch({ twitch: { chatSubscriptionId } });
-          }
+
+          // TODO: store in session storage
+          const chatSubscriptionId = await subscribeToChat(credsStore.twitch);
+          credsStore.$patch({ twitch: { chatSubscriptionId } });
           break;
 
         // chat message
@@ -116,12 +127,11 @@ export const init = (
     console.info("Twich WS closed");
   });
 
+  // handle auth removed
   credsStore.$subscribe((event) => {
     if (!credsStore.twitch) {
       console.warn("Twitch creds revoked, closing WS");
       ws.close();
     }
   });
-
-  return ws;
 };

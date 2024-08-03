@@ -37,6 +37,7 @@ export const oauth = async (credStore: CredentialsStore) => {
 
     // persist creds to store
     credStore.$patch({
+      twitchError: false,
       twitch: {
         token,
         userId: users.data[0].id,
@@ -60,4 +61,14 @@ export const login = () => {
   });
   const url = `https://id.twitch.tv/oauth2/authorize?${params.toString()}`;
   window.location.assign(url);
+};
+
+export const validateToken = async (token: string): Promise<boolean> => {
+  const res = await fetch("https://id.twitch.tv/oauth2/validate", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return res.status === 200;
 };

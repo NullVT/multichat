@@ -5,6 +5,7 @@ export type Settings = {
 };
 
 export type Credentials = {
+  twitchError: boolean
   twitch?: {
     token: string;
     userId: string;
