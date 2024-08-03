@@ -109,9 +109,20 @@ export const init = (
           msgStore.add({
             platform: "twitch",
             id: chatMessage.payload.event.message_id,
-            from: chatMessage.payload.event.chatter_user_name,
             recivedAt: new Date(data.metadata.message_timestamp),
             body: chatMessage.payload.event.message.text,
+            from: {
+              name: chatMessage.payload.event.chatter_user_name,
+              broadcaster: !!chatMessage.payload.event.badges.find(
+                (badge) => badge.set_id === "broadcaster"
+              ),
+              moderator: !!chatMessage.payload.event.badges.find(
+                (badge) => badge.set_id === "moderator"
+              ),
+              vip: !!chatMessage.payload.event.badges.find(
+                (badge) => badge.set_id === "vip"
+              ),
+            },
           });
       }
     }

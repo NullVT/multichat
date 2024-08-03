@@ -5,7 +5,7 @@ export type Settings = {
 };
 
 export type Credentials = {
-  twitchError: boolean
+  twitchError: boolean;
   twitch?: {
     token: string;
     userId: string;
@@ -19,6 +19,11 @@ export type Message = {
   id: string;
   platform: "twitch" | "youtube";
   recivedAt: Date;
-  from: string;
+  from: {
+    name: string;
+    broadcaster?: boolean;
+    moderator?: boolean;
+    vip?: boolean;
+  };
   body: string;
 };

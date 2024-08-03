@@ -1,5 +1,5 @@
 <template>
-  <div class="space-y-4 max-w-2xl mt-3 ml-3">
+  <div class="space-y-4 max-w-lg mt-3 ml-4">
     <Message v-for="msg in msgStore.$state" :key="msg.id" :msg="msg" />
   </div>
 </template>
