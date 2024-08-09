@@ -1,4 +1,3 @@
-<script lang="ts">
 import { defineStore } from "pinia";
 import { Settings } from "../types";
 
@@ -11,4 +10,3 @@ export const useSettingsStore = defineStore("settings", {
   }),
   actions: {},
 });
-</script>

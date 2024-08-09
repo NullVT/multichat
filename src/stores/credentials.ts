@@ -1,4 +1,3 @@
-<script lang="ts">
 import { defineStore, Store } from "pinia";
 import { Credentials } from "../types";
 
@@ -12,4 +11,3 @@ export const useCredentialsStore = defineStore("credentials", {
   }),
   actions: {},
 });
-</script>

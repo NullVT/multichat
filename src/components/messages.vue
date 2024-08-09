@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts" setup>
-import { useMessagesStore } from "../stores/messages.vue";
+import { useMessagesStore } from "../stores/messages";
 import Message from "./message.vue";
 
 const msgStore = useMessagesStore();

@@ -29,8 +29,8 @@
 </template>
 
 <script lang="ts" setup>
-import { useMessagesStore } from "../stores/messages.vue";
-import { useSettingsStore } from "../stores/settings.vue";
+import { useMessagesStore } from "../stores/messages";
+import { useSettingsStore } from "../stores/settings";
 import { Message } from "../types";
 import { XMarkIcon } from "@heroicons/vue/24/solid";
 

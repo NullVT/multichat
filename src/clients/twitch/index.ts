@@ -1,6 +1,6 @@
 import config from "../../config";
-import { CredentialsStore } from "../../stores/credentials.vue";
-import { MessagesStore } from "../../stores/messages.vue";
+import { CredentialsStore } from "../../stores/credentials";
+import { MessagesStore } from "../../stores/messages";
 import { Credentials } from "../../types";
 import {
   ChatMessage,
@@ -8,7 +8,6 @@ import {
   SessionWelcomeMessage,
   TwitchWebsocketMessage,
 } from "../../types/twitch";
-import { validateToken } from "./oauth";
 
 export * from "./oauth";
 
@@ -135,11 +134,11 @@ export const init = (
 
   // handle close
   ws.addEventListener("close", (event: WebSocketEventMap["close"]) => {
-    console.info("Twich WS closed");
+    console.info("Twich WS closed", event);
   });
 
   // handle auth removed
-  credsStore.$subscribe((event) => {
+  credsStore.$subscribe(() => {
     if (!credsStore.twitch) {
       console.warn("Twitch creds revoked, closing WS");
       ws.close();

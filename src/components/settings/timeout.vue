@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts" setup>
-import { useSettingsStore } from "../../stores/settings.vue";
+import { useSettingsStore } from "../../stores/settings";
 
 const settings = useSettingsStore();
 </script>

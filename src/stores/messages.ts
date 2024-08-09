@@ -1,7 +1,18 @@
-<script lang="ts">
-import { defineStore } from "pinia";
+import { defineStore, Store } from "pinia";
 import config from "../config";
 import { Message } from "../types";
+
+export type MessagesStore = Store<
+  "messages",
+  {
+    messages: Message[];
+  },
+  {},
+  {
+    add(msg: Message): void;
+    remove(id: string): void;
+  }
+>;
 
 export const useMessagesStore = defineStore("messages", {
   // only persist on dev server
@@ -26,4 +37,3 @@ export const useMessagesStore = defineStore("messages", {
     },
   },
 });
-</script>

@@ -27,11 +27,11 @@
 import { onMounted } from "vue";
 import Sidebar from "./components/sidebar.vue";
 import Messages from "./components/messages.vue";
-import { useSettingsStore } from "./stores/settings.vue";
-import { useCredentialsStore } from "./stores/credentials.vue";
+import { useSettingsStore } from "./stores/settings";
+import { useCredentialsStore } from "./stores/credentials";
 import { setDarkTheme } from "./helpers";
 import { init as twitchInit, oauth as twitchOauth } from "./clients/twitch";
-import { useMessagesStore } from "./stores/messages.vue";
+import { useMessagesStore } from "./stores/messages";
 
 // setup stores
 const credsStore = useCredentialsStore();
@@ -44,7 +44,7 @@ if (window.location.pathname.startsWith("/oauth/twitch")) {
 
 // bind darkmode to html element
 const settings = useSettingsStore();
-settings.$subscribe((mutation, state) => setDarkTheme(state.darkMode));
+settings.$subscribe((_, state) => setDarkTheme(state.darkMode));
 onMounted(() => setDarkTheme(settings.darkMode));
 
 // setup connection to twitch

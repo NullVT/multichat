@@ -1,5 +1,5 @@
 import config from "../../config";
-import { CredentialsStore } from "../../stores/credentials.vue";
+import { CredentialsStore } from "../../stores/credentials";
 import { UsersResponse } from "../../types/twitch";
 
 export const oauth = async (credStore: CredentialsStore) => {

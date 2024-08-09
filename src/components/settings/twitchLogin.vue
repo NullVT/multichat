@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts" setup>
-import { useCredentialsStore } from "../../stores/credentials.vue";
+import { useCredentialsStore } from "../../stores/credentials";
 import { login } from "../../clients/twitch";
 const creds = useCredentialsStore();
 </script>
