@@ -42,6 +42,7 @@ jobs:
         env:
           # TODO: set this by parsing the page_url
           BASE_URL: ${{ vars.BASE_URL }}
+          VITE_TWITCH_CLIENT_ID: ${{ vars.VITE_TWITCH_CLIENT_ID }}
       - name: Setup Pages
         uses: actions/configure-pages@v4
       - name: Upload artifact
