@@ -38,6 +38,7 @@ const credsStore = useCredentialsStore();
 const msgStore = useMessagesStore();
 
 // handle oauth crap
+// NOTE: when adding new subpaths make sure ot add them into vite.config.ts
 if (window.location.pathname.startsWith("/oauth/twitch")) {
   twitchOauth(credsStore);
 }

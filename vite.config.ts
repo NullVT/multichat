@@ -1,7 +1,12 @@
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import { resolve } from "path";
-import { copyFileSync, mkdirSync } from "node:fs";
+import { viteStaticCopy } from "vite-plugin-static-copy";
+
+/**
+ * Additonal output paths for GH Pages
+ */
+const additionOutputPaths = ["oauth/twitch"];
 
 /**
  * https://vitejs.dev/config/
@@ -17,15 +22,18 @@ export default defineConfig({
 
   plugins: [
     vue(),
-    {
-      name: "copy-index-to-404",
-      closeBundle: () => {
-        const outputDir = resolve(__dirname, "dist");
-        copyFileSync(
-          resolve(outputDir, "index.html"),
-          resolve(outputDir, "404.html")
-        );
-      },
-    },
+    viteStaticCopy({
+      targets: [
+        {
+          src: resolve(__dirname, "dist/index.html"),
+          dest: ".",
+          rename: () => "404.html",
+        },
+        ...additionOutputPaths.map((dest) => ({
+          src: resolve(__dirname, "dist/index.html"),
+          dest,
+        })),
+      ],
+    }),
   ],
 });
